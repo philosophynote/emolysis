@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <!-- from タッキーcss -->
+  <link rel="stylesheet" href='css/reset.css'>
+  <link rel="stylesheet" href='css/doctorsw.css'>
+</head>
+
+<body>
+  <div class="video-box">
+    <img src='img/logo.png'>
+    <div class="video">
+      <video id="their-video" autoplay playsinline></video>
+    </div>
+    <div class="btn-box">
+      <div class="s-btn" id="face" type="submit">
+        <p>感情分析開始</p>
+      </div>
+      <div class="m-btn">
+        <p>メッセージ</p>
+      </div>
+    </div>
+  </div>
+  <div class="graph-box">
+    <div class="graph1">
+      <span id="myface"></span>
+    </div>
+  </div>
+  <!-- メッセージ -->
+  <div class="m-listbox">
+    <div class="m-imgbox">
+      <img src='img/happiness.png' alt="">
+      <div class="img-mask"></div>
+    </div>
+    <div class="m-imgbox">
+      <img src='img/sadness.png' alt="">
+      <div class="img-mask"></div>
+    </div>
+    <div class="m-imgbox">
+      <img src='img/anger.png' alt="">
+      <div class="img-mask"></div>
+    </div>
+    <div class="m-imgbox">
+      <img src='img/normal.png' alt="">
+      <div class="img-mask"></div>
+    </div>
+    <div class="close">
+      <p>×</p>
+    </div>
+    <div class="send-btn">
+      送信
+    </div>
+  </div>
+
+  <div class="call-box">
+    <p id="my-id"></p>
+    <input id="their-id"></input>
+    <button id="make-call">発信</button>
+  </div>
+
+
+
+  <button id="start" style='display:none;'></button>
+  <div id="disp" style="display:none;"></div>
+  <div style="display:none;">
+    <canvas id="canvas" style="display:none;"></canvas><!-- canvas要素 -->
+    <button id="voice" type="submit" style="display:none;">声診断開始</button>
+    <div id="myvoice" style="display:none;"></div>
+    <video id="my-video" style="display:none;" autoplay muted playsinline></video>
+  </div>
+
+</body>
+
+</html>

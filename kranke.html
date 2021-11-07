@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <!-- タッキーCSS -->
+  <link rel="stylesheet" href='css/reset.css'>
+  <link rel="stylesheet" href='css/sw.css'>
+</head>
+
+<body>
+  <div class="video-box">
+    <video id="their-video" autoplay playsinline></video>
+    <div class="my-video-box">
+      <video id="my-video" autoplay muted playsinline></video>
+    </div>
+    <i class="far fa-times-circle"></i>
+  </div>
+  <div class="call-box">
+    <p id="my-id"></p>
+    <input id="their-id"></input>
+    <button id="make-call">発信</button>
+  </div>
+  <!-- //メッセージを表示するボタン -->
+  <!-- <div class="message">
+    <p><i class="fas fa-envelope-square"></i></p>
+  </div> -->
+  <!-- //モーダル（仮で画像入れてます） -->
+  <div class="messageBox"><img src="{% static 'img/happiness.png' %}" alt=""></div>
+  <div class="messageBox"><img src="{% static 'img/sadness.png' %}" alt=""></div>
+  <div class="messageBox"><img src="{% static 'img/anger.png' %}" alt=""></div>
+  <div class="messageBox"><img src="{% static 'img/normal.png' %}" alt=""></div>
+
+  <input type="text" name="" id="name" placeholder="name" value="kranke_A" style="display:none;margin-top:1000px">
+
+  <!-- ================================ 必要情報のテーブル (消したい) ================================ -->
+  <!-- 追加: 26_じゅんじゅん 2021/06/28 -->
+  <!-- ※ すみません。隠してください。 -->
+  <table border="0" width="100%" cellspacing="3" cellpadding="0" style="display:none;">
+    <tr>
+      <td width="240">&nbsp;サーバ URL</td>
+      <td><input type="text" class="text" id="serverURL" spellcheck="false" tabindex="3"></td>
+    </tr>
+    <tr>
+      <td width="240">&nbsp;接続エンジン名</td>
+      <td><input type="text" class="text grammarFileNames" spellcheck="false" tabindex="3"></td>
+    </tr>
+    <tr>
+      <td width="240">&nbsp;APPKEY</td>
+      <td><input type="text" class="text" id="authorization" spellcheck="false" tabindex="3"></td>
+    </tr>
+    <tr>
+      <td width="240">
+        <button class="text" id="resumePauseButton" tabindex="5">録音の開始</button>
+      </td>
+    </tr>
+  </table>
+  <!-- ================================ 必要情報のテーブル (終了) ================================ -->
+
+
+
+  <p id="txt"></p>
+
+</body>
+
+</html>
