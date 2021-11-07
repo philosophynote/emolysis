@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- from タッキーcss -->
+    <link rel="stylesheet" href='css/reset.css'>
+    <link rel="stylesheet" href='css/doctorswon.css'>
+</head>
+
+<body>
+    <div class="video-box">
+        <img src='img/logo.png'>
+        <div class="video">
+            <video id="their-video" autoplay playsinline></video>
+        </div>
+        <div class="btn-box">
+            <div class="s-btn" id="face" type="submit">
+                <p>感情分析開始</p>
+            </div>
+            <div class="m-btn">
+                <p>メッセージ</p>
+            </div>
+        </div>
+    </div>
+    <div class="graph-box">
+        <div class="graph1">
+            <span id="myface"></span>
+        </div>
+    </div>
+
+    <!-- メッセージ -->
+    <div class="m-listbox">
+        <div class="m-imgbox">
+            <img src='img/happiness.png' alt="">
+            <div class="img-mask"></div>
+        </div>
+        <div class="m-imgbox">
+            <img src='img/sadness.png' alt="">
+            <div class="img-mask"></div>
+        </div>
+        <div class="m-imgbox">
+            <img src='img/anger.png' alt="">
+            <div class="img-mask"></div>
+        </div>
+        <div class="m-imgbox">
+            <img src='img/normal.png' alt="">
+            <div class="img-mask"></div>
+        </div>
+        <div class="close">
+            <p>×</p>
+        </div>
+        <div class="send-btn">
+            送信
+        </div>
+    </div>
+    <div>
+        <div>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <!--canvas要素-->
+            <img id="img" />
+            <!--img要素-->
+        </div>
+    </div>
+    <div id="myvoice"></div>
+
+    <!-- ================================ 必要情報のテーブル (消したい) ================================ -->
+    <!-- NLP追加 じゅんじゅん (202106291508)-->
+    <table border="0" width="100%" cellspacing="3" cellpadding="0" style="display:none;">
+        <tr>
+            <td width="240">&nbsp;サーバ URL</td>
+            <td><input type="text" class="text" id="serverURL" spellcheck="false" tabindex="3"></td>
+        </tr>
+        <tr>
+            <td width="240">&nbsp;接続エンジン名</td>
+            <td><input type="text" class="text grammarFileNames" spellcheck="false" tabindex="3"></td>
+        </tr>
+        <tr>
+            <td width="240">&nbsp;APPKEY</td>
+            <td><input type="text" class="text" id="authorization" spellcheck="false" tabindex="3"></td>
+        </tr>
+        <tr>
+            <td width="240">
+                <button class="text" id="resumePauseButton" tabindex="5" style="margin-top:1000px">録音の開始</button>
+            </td>
+        </tr>
+    </table>
+    <!-- ================================ 必要情報のテーブル (終了) ================================ -->
+</body>
+
+</html>

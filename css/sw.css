@@ -1,0 +1,83 @@
+body{
+  position: relative;
+}
+.video-box{
+  width: 10vw;
+  height: 10vh;
+}
+#their-video{
+  width:100%;
+  height: 100%;
+  object-fit: cover;
+  position:absolute;
+  top: 0;
+  left: 0;
+}
+.my-video-box{
+  width: 20%;
+  height: 20%;
+  margin: 10px 10px 0 0;
+  position:absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+#my-video{
+  width:100%;
+  height: 100%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  border-radius:10px;
+}
+.video-box i{
+  color:#000;
+  font-size:3.5em;
+  margin-bottom:10px;
+  position:absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* closeBtnのホバー */
+.video-box i:hover{
+  font-size: 4.0em;
+  color:red;
+}
+
+.call-box{
+  width:100vw;
+  height: 100vh;
+  background-color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items:center;
+}
+
+/* メッセージ表示 */
+.message{
+  position: absolute;
+  top:0;
+  left:0;
+  font-size: 2em;
+  margin:5px 0 0 10px;
+}
+.message p{
+  color: coral;
+}
+/* メッセージのモーダル */
+.messageBox{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform:translate(-50%, -50%) scale(0);
+  background: rgba(0,0,0,.6);
+  width:90vw;
+  z-index: 10;
+  padding: 10px 10px;
+  transition: .5s;
+}
