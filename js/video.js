@@ -41,5 +41,4 @@ window.__video = {
             new faceapi.TinyFaceDetectorOptions()).withFaceExpressions()
         return detectionsWithExpressions[0].expressions
     }
-
 }
