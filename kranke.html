@@ -29,6 +29,7 @@
     <div class="kranke-video-box">
       <video id="kranke-video" autoplay muted playsinline></video>
     </div>
+    <button id="tBtn">test</button>
     <i class="far fa-times-circle"></i>
   </div>
   <div class="call-box">
@@ -72,62 +73,62 @@
   </table>
   <!-- ================================ 必要情報のテーブル (終了) ================================ -->
   <!-- 各JSファイルで使用するAPIキーなどの読み込み -->
-  <script src="setting.js"></script>
+  <script src="js/setting.js"></script>
 
   <!-- firebase -->
   <script src="js/firebase.js"></script>
   <script>
     // Firebase初期化
-    firebase.initializeApp(__FIREBASE_CONFIG);
-    let fb = firebase.database();
-    //json形式で受け取った値を格納する
-    const emo_voice = {
-      anger: 0,
-      calm: 0,
-      energy: 0,
-      joy: 0,
-      sorrow: 0,
-    }
-    //ネガポジ情報
-    const emo_text = {
-      magnitude: 0,
-      score: 0
-    };
-    const doktorId = document.getElementById("inputDokdorId").value
-    const makecallbtn = document.getElementById("make-call");
-    //規定値の設定(firabase側の事情なので詳細は不明)
-    makecallbtn.addEventListener('click', function () {
-      console.log(doktorId)
-      const emo_voice = {
-        error: 0,
-        calm: 0,
-        anger: 0,
-        joy: 0,
-        sorrow: 0,
-        energy: 0,
-      };
-      fb.ref(doktorId + "/voice").set(0);
-      fb.ref(doktorId + "/voice").push(emo_voice);
-    });
-    const emo_last = {
-      t_magnitude: 0,
-      t_score: 0,
-      f_anger: 0,
-      f_contempt: 0,
-      f_disgust: 0,
-      f_fear: 0,
-      f_happiness: 0,
-      f_neutral: 0,
-      f_sadness: 0,
-      f_surprise: 0,
-      v_anger: 0,
-      v_calm: 0,
-      v_energy: 0,
-      v_joy: 0,
-      v_sorrow: 0,
-      positive: 0,
-      negative: 0
-    }
+    // firebase.initializeApp(__FIREBASE_CONFIG);
+    // let fb = firebase.database();
+    // //json形式で受け取った値を格納する
+    // const emo_voice = {
+    //   anger: 0,
+    //   calm: 0,
+    //   energy: 0,
+    //   joy: 0,
+    //   sorrow: 0,
+    // }
+    // //ネガポジ情報
+    // const emo_text = {
+    //   magnitude: 0,
+    //   score: 0
+    // };
+    // const doktorId = document.getElementById("inputDokdorId").value
+    // const makecallbtn = document.getElementById("make-call");
+    // //規定値の設定(firabase側の事情なので詳細は不明)
+    // makecallbtn.addEventListener('click', function () {
+    //   console.log(doktorId)
+    //   const emo_voice = {
+    //     error: 0,
+    //     calm: 0,
+    //     anger: 0,
+    //     joy: 0,
+    //     sorrow: 0,
+    //     energy: 0,
+    //   };
+    //   fb.ref(doktorId + "/voice").set(0);
+    //   fb.ref(doktorId + "/voice").push(emo_voice);
+    // });
+    // const emo_last = {
+    //   t_magnitude: 0,
+    //   t_score: 0,
+    //   f_anger: 0,
+    //   f_contempt: 0,
+    //   f_disgust: 0,
+    //   f_fear: 0,
+    //   f_happiness: 0,
+    //   f_neutral: 0,
+    //   f_sadness: 0,
+    //   f_surprise: 0,
+    //   v_anger: 0,
+    //   v_calm: 0,
+    //   v_energy: 0,
+    //   v_joy: 0,
+    //   v_sorrow: 0,
+    //   positive: 0,
+    //   negative: 0
+    // }
   </script>
 
   <!-- 不要かもしれません -->
