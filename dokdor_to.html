@@ -9,6 +9,31 @@
     <!-- from タッキーcss -->
     <link rel="stylesheet" href='css/reset.css'>
     <link rel="stylesheet" href='css/doctorswon.css'>
+    <!--jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!--axios-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <!--cookie-->
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <!--plotly-->
+    <script src="https://cdn.plot.ly/plotly-2.1.0.min.js"></script>
+    <!-- なんかフォント？ from タッキー -->
+    <script src="https://kit.fontawesome.com/f6548674cd.js" crossorigin="anonymous"></script>
+    <!-- fontawesome-->
+    <script src="https://kit.fontawesome.com/f6548674cd.js" crossorigin="anonymous"></script>
+    <!-- sweetalert -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <!-- adobe font -->
+    <script>
+        (function (d) {
+            var config = {
+                kitId: 'zsh6oky',
+                scriptTimeout: 3000,
+                async: true
+            },
+                h = d.documentElement, t = setTimeout(function () { h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive"; }, config.scriptTimeout), tk = d.createElement("script"), f = false, s = d.getElementsByTagName("script")[0], a; h.className += " wf-loading"; tk.src = 'https://use.typekit.net/' + config.kitId + '.js'; tk.async = true; tk.onload = tk.onreadystatechange = function () { a = this.readyState; if (f || a && a != "complete" && a != "loaded") return; f = true; clearTimeout(t); try { Typekit.load(config) } catch (e) { } }; s.parentNode.insertBefore(tk, s)
+        })(document);
+    </script>
 </head>
 
 <body>
@@ -89,6 +114,13 @@
         </tr>
     </table>
     <!-- ================================ 必要情報のテーブル (終了) ================================ -->
+    <!-- 各JSファイルで使用するAPIキーなどの読み込み -->
+    <script src="setting.js"></script>
+    <!-- 音声感情認識 -->
+    <script src="js/voice.js"></script>
+    <!-- 言語感情認識 -->
+    <script src="js/textemotion.js"></script>
+    <!-- <script src="js/main.js"></script> -->
 </body>
 
 </html>
