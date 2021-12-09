@@ -41,10 +41,10 @@
     <p><i class="fas fa-envelope-square"></i></p>
   </div> -->
   <!-- //モーダル（仮で画像入れてます） -->
-  <div class="messageBox"><img src ='img/happiness.png' alt=""></div>
-  <div class="messageBox"><img src = 'img/sadness.png' alt=""></div>
-  <div class="messageBox"><img src = 'img/anger.png' alt=""></div>
-  <div class="messageBox"><img src = 'img/normal.png' alt=""></div>
+  <div class="messageBox"><img src='img/happiness.png' alt=""></div>
+  <div class="messageBox"><img src='img/sadness.png' alt=""></div>
+  <div class="messageBox"><img src='img/anger.png' alt=""></div>
+  <div class="messageBox"><img src='img/normal.png' alt=""></div>
 
   <input type="text" name="" id="name" placeholder="name" value="kranke_A" style="display:none;margin-top:1000px">
 
@@ -82,16 +82,16 @@
     let fb = firebase.database();
     //json形式で受け取った値を格納する
     const emo_voice = {
-        anger: 0,
-        calm: 0,
-        energy: 0,
-        joy: 0,
-        sorrow: 0,
+      anger: 0,
+      calm: 0,
+      energy: 0,
+      joy: 0,
+      sorrow: 0,
     }
     //ネガポジ情報
     const emo_text = {
-        magnitude: 0,
-        score: 0
+      magnitude: 0,
+      score: 0
     };
     const doktorId = document.getElementById("inputDokdorId").value
     const makecallbtn = document.getElementById("make-call");
@@ -99,34 +99,34 @@
     makecallbtn.addEventListener('click', function () {
       console.log(doktorId)
       const emo_voice = {
-          error: 0,
-          calm: 0,
-          anger: 0,
-          joy: 0,
-          sorrow: 0,
-          energy: 0,
+        error: 0,
+        calm: 0,
+        anger: 0,
+        joy: 0,
+        sorrow: 0,
+        energy: 0,
       };
-      fb.ref(doktorId+"/voice").set(0);
-      fb.ref(doktorId+"/voice").push(emo_voice);
+      fb.ref(doktorId + "/voice").set(0);
+      fb.ref(doktorId + "/voice").push(emo_voice);
     });
     const emo_last = {
-        t_magnitude: 0,
-        t_score: 0,
-        f_anger: 0,
-        f_contempt: 0,
-        f_disgust: 0,
-        f_fear: 0,
-        f_happiness: 0,
-        f_neutral: 0,
-        f_sadness: 0,
-        f_surprise: 0,
-        v_anger: 0,
-        v_calm: 0,
-        v_energy: 0,
-        v_joy: 0,
-        v_sorrow: 0,
-        positive : 0,
-        negative : 0
+      t_magnitude: 0,
+      t_score: 0,
+      f_anger: 0,
+      f_contempt: 0,
+      f_disgust: 0,
+      f_fear: 0,
+      f_happiness: 0,
+      f_neutral: 0,
+      f_sadness: 0,
+      f_surprise: 0,
+      v_anger: 0,
+      v_calm: 0,
+      v_energy: 0,
+      v_joy: 0,
+      v_sorrow: 0,
+      positive: 0,
+      negative: 0
     }
   </script>
 
@@ -140,8 +140,11 @@
   <!-- skyway -->
   <script src="js/krankeskyway.js"></script>
 
+  <!-- video -->
+  <script src="lib/face-api.min.js"></script>
+  <script src="js/video.js"></script>
   <!-- グラフ描写など -->
-  <script src="js/main.js"></script>
+  <script src="js/kranke.js"></script>
 </body>
 
 </html>
