@@ -9,19 +9,31 @@
   <!-- タッキーCSS -->
   <link rel="stylesheet" href='css/reset.css'>
   <link rel="stylesheet" href='css/sw.css'>
+  <!--jQuery-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--axios-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+  <!--cookie-->
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+  <!-- skyway -->
+  <script src="https://cdn.webrtc.ecl.ntt.com/skyway-4.4.1.min.js"></script>
+  <!-- firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase.js"></script>
+  <!-- タッキー分 -->
+  <script src="https://kit.fontawesome.com/f6548674cd.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
   <div class="video-box">
-    <video id="their-video" autoplay playsinline></video>
-    <div class="my-video-box">
-      <video id="my-video" autoplay muted playsinline></video>
+    <video id="dokdor-video" autoplay playsinline></video>
+    <div class="kranke-video-box">
+      <video id="kranke-video" autoplay muted playsinline></video>
     </div>
     <i class="far fa-times-circle"></i>
   </div>
   <div class="call-box">
-    <p id="my-id"></p>
-    <input id="their-id"></input>
+    <p id="displayKrankeId"></p>
+    <input id="inputDokdorId"></input>
     <button id="make-call">発信</button>
   </div>
   <!-- //メッセージを表示するボタン -->
@@ -29,10 +41,10 @@
     <p><i class="fas fa-envelope-square"></i></p>
   </div> -->
   <!-- //モーダル（仮で画像入れてます） -->
-  <div class="messageBox"><img src="{% static 'img/happiness.png' %}" alt=""></div>
-  <div class="messageBox"><img src="{% static 'img/sadness.png' %}" alt=""></div>
-  <div class="messageBox"><img src="{% static 'img/anger.png' %}" alt=""></div>
-  <div class="messageBox"><img src="{% static 'img/normal.png' %}" alt=""></div>
+  <div class="messageBox"><img src='img/happiness.png' alt=""></div>
+  <div class="messageBox"><img src='img/sadness.png' alt=""></div>
+  <div class="messageBox"><img src='img/anger.png' alt=""></div>
+  <div class="messageBox"><img src='img/normal.png' alt=""></div>
 
   <input type="text" name="" id="name" placeholder="name" value="kranke_A" style="display:none;margin-top:1000px">
 
@@ -59,11 +71,80 @@
     </tr>
   </table>
   <!-- ================================ 必要情報のテーブル (終了) ================================ -->
+  <!-- 各JSファイルで使用するAPIキーなどの読み込み -->
+  <script src="setting.js"></script>
 
+  <!-- firebase -->
+  <script src="js/firebase.js"></script>
+  <script>
+    // Firebase初期化
+    firebase.initializeApp(__FIREBASE_CONFIG);
+    let fb = firebase.database();
+    //json形式で受け取った値を格納する
+    const emo_voice = {
+      anger: 0,
+      calm: 0,
+      energy: 0,
+      joy: 0,
+      sorrow: 0,
+    }
+    //ネガポジ情報
+    const emo_text = {
+      magnitude: 0,
+      score: 0
+    };
+    const doktorId = document.getElementById("inputDokdorId").value
+    const makecallbtn = document.getElementById("make-call");
+    //規定値の設定(firabase側の事情なので詳細は不明)
+    makecallbtn.addEventListener('click', function () {
+      console.log(doktorId)
+      const emo_voice = {
+        error: 0,
+        calm: 0,
+        anger: 0,
+        joy: 0,
+        sorrow: 0,
+        energy: 0,
+      };
+      fb.ref(doktorId + "/voice").set(0);
+      fb.ref(doktorId + "/voice").push(emo_voice);
+    });
+    const emo_last = {
+      t_magnitude: 0,
+      t_score: 0,
+      f_anger: 0,
+      f_contempt: 0,
+      f_disgust: 0,
+      f_fear: 0,
+      f_happiness: 0,
+      f_neutral: 0,
+      f_sadness: 0,
+      f_surprise: 0,
+      v_anger: 0,
+      v_calm: 0,
+      v_energy: 0,
+      v_joy: 0,
+      v_sorrow: 0,
+      positive: 0,
+      negative: 0
+    }
+  </script>
 
-
+  <!-- 不要かもしれません -->
   <p id="txt"></p>
 
+  <!-- 音声感情認識 -->
+  <script src="js/voice.js"></script>
+  <!-- 言語感情認識 -->
+  <script src="js/text-emotion.js"></script>
+  <!-- skyway -->
+  <script src="js/krankeskyway.js"></script>
+
+  <!-- video -->
+  <script src="lib/face-api.min.js"></script>
+  <script src="js/video.js"></script>
+  <!-- グラフ描写など -->
+  <script src="js/kranke.js"></script>
 </body>
 
 </html>
