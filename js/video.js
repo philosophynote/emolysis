@@ -39,7 +39,8 @@ window.__video = {
 
         const detectionsWithExpressions = await faceapi.detectAllFaces(img,
             new faceapi.TinyFaceDetectorOptions()).withFaceExpressions()
-        return detectionsWithExpressions[0].expressions
+        if (detectionsWithExpressions[0]) {
+            return detectionsWithExpressions[0].expressions
+        }
     }
-
 }
