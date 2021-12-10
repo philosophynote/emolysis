@@ -95,6 +95,7 @@ const setSkyWayKey = function () {
     db.ref().child('currentSkyWayKey').set(input.value)
 }
 
+
 const tBtn = document.getElementById('tBtn')
 const input = document.getElementById('inputDokdorId')
 const cBtn = document.getElementById('make-call')
