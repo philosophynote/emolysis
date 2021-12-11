@@ -5,7 +5,7 @@ body{
   width: 10vw;
   height: 10vh;
 }
-#their-video{
+#dokdor-video{
   width:100%;
   height: 100%;
   object-fit: cover;
@@ -13,7 +13,7 @@ body{
   top: 0;
   left: 0;
 }
-.my-video-box{
+.kranke-video-box{
   width: 20%;
   height: 20%;
   margin: 10px 10px 0 0;
@@ -22,7 +22,7 @@ body{
   right: 0;
   z-index: 1;
 }
-#my-video{
+#kranke-video{
   width:100%;
   height: 100%;
   object-fit: cover;
