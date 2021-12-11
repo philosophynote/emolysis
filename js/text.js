@@ -1420,149 +1420,210 @@ var Wrp = function () {
 
 // ================================ 音声の文字書き起こし処理 ================================
 // サンプルプログラムのwrp.htmlのJavascript部分のコピペ
-window.__textEmotion = 
-(function () {
-    function sanitize_(s) {
-        return s.replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/'/g, '&apos;')
-            .replace(/"/g, '&quot;');
-    }
-
-    // 「voiceText」が書き起こした文字
-    let voiceText;
-    let voiceTextEnding;
-
-    // ここからは理解できないが、いい感じに文章、音節ごとに区切って検出する技が書かれている
-    function append_(item) {
-
-        if (item.length == 0) {
-            return;
-        }
-        if (item == "<->") {
-            return;
+window.__textEmotion =
+    (function () {
+        function sanitize_(s) {
+            return s.replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/'/g, '&apos;')
+                .replace(/"/g, '&quot;');
         }
 
-        let itemState = 0;
-        for (let i = 0; i < item.length; i++) {
-            let c = item.charCodeAt(i);
-            if (itemState == 0) {
-                if (c == 0x005F) {
-                    break;
-                } else
-                    if (c == 0x4E00 || c == 0x4E8C || c == 0x4E09 || c == 0x56DB || c == 0x4E94 || c == 0x516D || c == 0x4E03 || c == 0x516B || c == 0x4E5D) { // '一'～'九'
-                        itemState = 1;
+        // 「voiceText」が書き起こした文字
+        let voiceText;
+        let voiceTextEnding;
+
+        // ここからは理解できないが、いい感じに文章、音節ごとに区切って検出する技が書かれている
+        function append_(item) {
+
+            if (item.length == 0) {
+                return;
+            }
+            if (item == "<->") {
+                return;
+            }
+
+            let itemState = 0;
+            for (let i = 0; i < item.length; i++) {
+                let c = item.charCodeAt(i);
+                if (itemState == 0) {
+                    if (c == 0x005F) {
+                        break;
                     } else
-                        if (c == 0x5341) { // '十'
-                            itemState = 2;
+                        if (c == 0x4E00 || c == 0x4E8C || c == 0x4E09 || c == 0x56DB || c == 0x4E94 || c == 0x516D || c == 0x4E03 || c == 0x516B || c == 0x4E5D) { // '一'～'九'
+                            itemState = 1;
                         } else
-                            if (c == 0x767E) { // '百'
-                                itemState = 4;
+                            if (c == 0x5341) { // '十'
+                                itemState = 2;
                             } else
-                                if (c == 0x5343) { // '千'
-                                    itemState = 8;
-                                } else {
-                                    break;
-                                }
-            } else {
-                if (c == 0x005F) {
-                    item = item.substr(0, i) + item.substr(i + 1);
-                    break;
-                } else
-                    if (c == 0x4E00 || c == 0x4E8C || c == 0x4E09 || c == 0x56DB || c == 0x4E94 || c == 0x516D || c == 0x4E03 || c == 0x516B || c == 0x4E5D) { // '一'～'九'
-                        if ((itemState & 1) != 0) {
-                            break;
-                        } else {
-                            itemState |= 1;
-                        }
+                                if (c == 0x767E) { // '百'
+                                    itemState = 4;
+                                } else
+                                    if (c == 0x5343) { // '千'
+                                        itemState = 8;
+                                    } else {
+                                        break;
+                                    }
+                } else {
+                    if (c == 0x005F) {
+                        item = item.substr(0, i) + item.substr(i + 1);
+                        break;
                     } else
-                        if (c == 0x5341) { // '十'
-                            if ((itemState & 2) != 0) {
+                        if (c == 0x4E00 || c == 0x4E8C || c == 0x4E09 || c == 0x56DB || c == 0x4E94 || c == 0x516D || c == 0x4E03 || c == 0x516B || c == 0x4E5D) { // '一'～'九'
+                            if ((itemState & 1) != 0) {
                                 break;
                             } else {
-                                itemState |= 2;
-                                itemState &= ~1;
+                                itemState |= 1;
                             }
                         } else
-                            if (c == 0x767E) { // '百'
-                                if ((itemState & 6) != 0) {
+                            if (c == 0x5341) { // '十'
+                                if ((itemState & 2) != 0) {
                                     break;
                                 } else {
-                                    itemState |= 4;
+                                    itemState |= 2;
                                     itemState &= ~1;
                                 }
                             } else
-                                if (c == 0x5343) { // '千'
-                                    if ((itemState & 14) != 0) {
+                                if (c == 0x767E) { // '百'
+                                    if ((itemState & 6) != 0) {
                                         break;
                                     } else {
-                                        itemState |= 8;
+                                        itemState |= 4;
                                         itemState &= ~1;
                                     }
-                                } else {
-                                    break;
-                                }
-            }
-        }
-
-        item = item.replace(/_/g, " ");
-        let itemBeginningChar = item.charCodeAt(0);
-        let itemEndingChar = (item.length > 1) ? item.charCodeAt(item.length - 1) : 0;
-        if (voiceTextEnding == 0) {
-            let itemBeginning;
-            let c = itemBeginningChar;
-            if (c == 0x0020) {
-                itemBeginning = 0;
-            } else
-                if (c == 0x0021
-                    || c == 0x002C
-                    || c == 0x002E
-                    || c == 0x003A
-                    || c == 0x003B
-                    || c == 0x003F) {
-                    itemBeginning = 5;
-                } else
-                    if (c == 0x3001
-                        || c == 0x3002
-                        || c == 0xFF01
-                        || c == 0xFF0C
-                        || c == 0xFF0E
-                        || c == 0xFF1A
-                        || c == 0xFF1B
-                        || c == 0xFF1F) {
-                        itemBeginning = 6;
-                    } else {
-                        itemBeginning = 7;
-                    }
-            if (itemBeginning == 0
-                || itemBeginning == 5
-                || itemBeginning == 6) {
-                if (voiceText.length > 0) {
-                    voiceText = voiceText.substr(0, voiceText.length - 1);
+                                } else
+                                    if (c == 0x5343) { // '千'
+                                        if ((itemState & 14) != 0) {
+                                            break;
+                                        } else {
+                                            itemState |= 8;
+                                            itemState &= ~1;
+                                        }
+                                    } else {
+                                        break;
+                                    }
                 }
             }
-        } else {
-            let itemBeginning;
-            let c = itemBeginningChar;
+
+            item = item.replace(/_/g, " ");
+            let itemBeginningChar = item.charCodeAt(0);
+            let itemEndingChar = (item.length > 1) ? item.charCodeAt(item.length - 1) : 0;
+            if (voiceTextEnding == 0) {
+                let itemBeginning;
+                let c = itemBeginningChar;
+                if (c == 0x0020) {
+                    itemBeginning = 0;
+                } else
+                    if (c == 0x0021
+                        || c == 0x002C
+                        || c == 0x002E
+                        || c == 0x003A
+                        || c == 0x003B
+                        || c == 0x003F) {
+                        itemBeginning = 5;
+                    } else
+                        if (c == 0x3001
+                            || c == 0x3002
+                            || c == 0xFF01
+                            || c == 0xFF0C
+                            || c == 0xFF0E
+                            || c == 0xFF1A
+                            || c == 0xFF1B
+                            || c == 0xFF1F) {
+                            itemBeginning = 6;
+                        } else {
+                            itemBeginning = 7;
+                        }
+                if (itemBeginning == 0
+                    || itemBeginning == 5
+                    || itemBeginning == 6) {
+                    if (voiceText.length > 0) {
+                        voiceText = voiceText.substr(0, voiceText.length - 1);
+                    }
+                }
+            } else {
+                let itemBeginning;
+                let c = itemBeginningChar;
+                if (c == 0x0020) {
+                    itemBeginning = 0;
+                } else
+                    if (c >= 0x0041 && c <= 0x005A
+                        || c >= 0x0061 && c <= 0x007A
+                        || c >= 0x0100 && c <= 0x0DFF
+                        || c >= 0x0E60 && c <= 0x01FF) {
+                        itemBeginning = 1;
+                    } else
+                        if (c >= 0xFF21 && c <= 0xFF3A
+                            || c >= 0xFF41 && c <= 0xFF5A) {
+                            itemBeginning = 2;
+                        } else
+                            if (c >= 0x0030 && c <= 0x0039) {
+                                itemBeginning = (voiceTextEnding == 8 && itemEndingChar == 0) ? 8 : 3;
+                            } else
+                                if (c >= 0xFF10 && c <= 0xFF19) {
+                                    itemBeginning = (voiceTextEnding == 9 && itemEndingChar == 0) ? 9 : 4;
+                                } else
+                                    if (c == 0x0021
+                                        || c == 0x002C
+                                        || c == 0x002E
+                                        || c == 0x003A
+                                        || c == 0x003B
+                                        || c == 0x003F) {
+                                        itemBeginning = 5;
+                                    } else
+                                        if (c == 0x3001
+                                            || c == 0x3002
+                                            || c == 0xFF01
+                                            || c == 0xFF0C
+                                            || c == 0xFF0E
+                                            || c == 0xFF1A
+                                            || c == 0xFF1B
+                                            || c == 0xFF1F) {
+                                            itemBeginning = 6;
+                                        } else {
+                                            itemBeginning = 7;
+                                        }
+                if (itemBeginning == 1 || voiceTextEnding == 1 && (itemBeginning == 2
+                    || itemBeginning == 3
+                    || itemBeginning == 4
+                    || itemBeginning == 7)
+                    || voiceTextEnding == 2 && (itemBeginning == 2)
+                    || voiceTextEnding == 3 && (itemBeginning == 3
+                        || itemBeginning == 4)
+                    || voiceTextEnding == 4 && (itemBeginning == 3
+                        || itemBeginning == 4)
+                    || voiceTextEnding == 5 && (itemBeginning == 2
+                        || itemBeginning == 3
+                        || itemBeginning == 4
+                        || itemBeginning == 7)
+                    || voiceTextEnding == 8 && (itemBeginning == 3
+                        || itemBeginning == 4)
+                    || voiceTextEnding == 9 && (itemBeginning == 3
+                        || itemBeginning == 4)) {
+                    voiceText += " ";
+                }
+            }
+            voiceText += item;
+            c = (itemEndingChar == 0) ? itemBeginningChar : itemEndingChar;
             if (c == 0x0020) {
-                itemBeginning = 0;
+                voiceTextEnding = 0;
             } else
                 if (c >= 0x0041 && c <= 0x005A
                     || c >= 0x0061 && c <= 0x007A
                     || c >= 0x0100 && c <= 0x0DFF
                     || c >= 0x0E60 && c <= 0x01FF) {
-                    itemBeginning = 1;
+                    voiceTextEnding = 1;
                 } else
                     if (c >= 0xFF21 && c <= 0xFF3A
                         || c >= 0xFF41 && c <= 0xFF5A) {
-                        itemBeginning = 2;
+                        voiceTextEnding = 2;
                     } else
                         if (c >= 0x0030 && c <= 0x0039) {
-                            itemBeginning = (voiceTextEnding == 8 && itemEndingChar == 0) ? 8 : 3;
+                            voiceTextEnding = (itemEndingChar == 0) ? 8 : 3;
                         } else
                             if (c >= 0xFF10 && c <= 0xFF19) {
-                                itemBeginning = (voiceTextEnding == 9 && itemEndingChar == 0) ? 9 : 4;
+                                voiceTextEnding = (itemEndingChar == 0) ? 9 : 4;
                             } else
                                 if (c == 0x0021
                                     || c == 0x002C
@@ -1570,7 +1631,7 @@ window.__textEmotion =
                                     || c == 0x003A
                                     || c == 0x003B
                                     || c == 0x003F) {
-                                    itemBeginning = 5;
+                                    voiceTextEnding = 5;
                                 } else
                                     if (c == 0x3001
                                         || c == 0x3002
@@ -1580,264 +1641,207 @@ window.__textEmotion =
                                         || c == 0xFF1A
                                         || c == 0xFF1B
                                         || c == 0xFF1F) {
-                                        itemBeginning = 6;
+                                        voiceTextEnding = 6;
                                     } else {
-                                        itemBeginning = 7;
+                                        voiceTextEnding = 7;
                                     }
-            if (itemBeginning == 1 || voiceTextEnding == 1 && (itemBeginning == 2
-                || itemBeginning == 3
-                || itemBeginning == 4
-                || itemBeginning == 7)
-                || voiceTextEnding == 2 && (itemBeginning == 2)
-                || voiceTextEnding == 3 && (itemBeginning == 3
-                    || itemBeginning == 4)
-                || voiceTextEnding == 4 && (itemBeginning == 3
-                    || itemBeginning == 4)
-                || voiceTextEnding == 5 && (itemBeginning == 2
-                    || itemBeginning == 3
-                    || itemBeginning == 4
-                    || itemBeginning == 7)
-                || voiceTextEnding == 8 && (itemBeginning == 3
-                    || itemBeginning == 4)
-                || voiceTextEnding == 9 && (itemBeginning == 3
-                    || itemBeginning == 4)) {
-                voiceText += " ";
+        }
+
+        // ================================ 録音開始&停止ボタン ================================
+        function disconnectEnded() {
+
+            // 録音の開始
+            resumePauseButton.innerHTML = "録音の開始";
+            resumePauseButton.disabled = false;
+            resumePauseButton.classList.remove("sending");
+        }
+
+        // ================================ 録音中&停止ボタン ================================
+        function feedDataResumeEnded() {
+
+            resumePauseButton.innerHTML = "<br><br>音声データの録音中...<br><br><span class=\"supplement\">クリック → 録音の停止</span>";
+            resumePauseButton.disabled = false;
+            resumePauseButton.classList.add("sending");
+
+        }
+        // この関数は恐らく使用していない
+        // ================================ 音声認識処理の最中 ================================
+        function resultUpdated(result) {
+
+            try {
+                let json = JSON.parse(result);
+            } catch (e) {
+                if (result.indexOf("\x01") == -1) {
+                } else {
+                    let fields = result.split("\x01");
+                    let fields0 = fields[0].split("|");
+                    voiceTextEnding = 0;
+                    let i, j;
+                    for (i = 0; i < fields0.length; i++) {
+                        let written = fields0[i];
+                        if ((j = written.indexOf(" ")) != -1) {
+                            written = written.slice(0, j);
+                        }
+                        if ((j = written.indexOf(":")) != -1) {
+                            written = written.slice(0, j);
+                        }
+                        if ((j = written.indexOf("\x03")) != -1) {
+                            written = written.slice(0, j);
+                        }
+                        append_(written);
+                    }
+                }
+            }
+
+            this.recognitionResultText.innerHTML = voiceText;
+        }
+        //wrp.htmlのコピペ
+        // ================================ 認識処理 ================================
+        function resultFinalized(result) {
+            this.time0 = 0;
+            this.time2 = new Date().getTime() - this.time2;
+            this.confidence = -1.0;
+            try {
+                let json = JSON.parse(result);
+                voiceText = (json.text) ? sanitize_(json.text) : (json.code != 'o' && json.message);
+                if (json.results && json.results[0]) {
+                    if (this.time0 == 0) {
+                        this.time0 = json.results[0].endtime;
+                    }
+                    this.confidence = json.results[0].confidence;
+                }
+            } catch (e) {
+                if (result.indexOf("\x01") == -1) {
+                } else {
+                    let fields = result.split("\x01");
+                    let fields0 = fields[0].split("|");
+                    voiceTextEnding = 0;
+
+                    let i, j;
+                    for (i = 0; i < fields0.length; i++) {
+                        let written = fields0[i];
+                        if ((j = written.indexOf(" ")) != -1) {
+                            written = written.slice(0, j);
+                        }
+                        if ((j = written.indexOf(":")) != -1) {
+                            written = written.slice(0, j);
+                        }
+                        if ((j = written.indexOf("\x03")) != -1) {
+                            written = written.slice(0, j);
+                        }
+                        append_(written);
+                    }
+                    voiceText = (voiceText) ? sanitize_(voiceText) : "<font color=\"gray\">(なし)</font>";
+                    if (this.time0 == 0) {
+                        this.time0 = parseInt(fields[2].split("-")[1]);
+                    }
+                    this.confidence = parseFloat(fields[1]);
+                }
+            }
+            // ================================ 書き起こした文字を表示 (コンソールとHTMLに直で) ================================
+
+            console.log(voiceText);
+
+            // ================================ Ajax/Axios非同期通信処理 ================================
+            // axios送信用のデータを用意
+            // 引数：文字起こししたテキストデータ
+            // 返り値：axos送信用データ
+            const readyAxios = function (textData) {
+                axiosReadyData = { documents: [{ id: "1", text: textData }] }
+                return axiosReadyData
+            };
+
+
+
+            const sendAxios = (text) => {
+                const axiosdata = readyAxios(text)
+                axios.post(__TEXT_URL, axiosdata, {
+                    headers: { 'Ocp-Apim-Subscription-Key': __TEXT_KEY },
+                }).then((res) => {
+                    console.log("ポジティブ:" + res.data.documents[0].confidenceScores.positive)
+                    console.log("ネガティブ:" + res.data.documents[0].confidenceScores.negative)
+                    __DB.sendData('text', {
+                        positive: res.data.documents[0].confidenceScores.positive,
+                        negative: res.data.documents[0].confidenceScores.negative
+                    })
+                })
+                    .catch((error) => {
+                        console.log(error)
+                    });
+            }
+
+            // じゅんじゅん (2021/06/29) ================================
+            // 変更: ボタンで送信 → 文節ごとに送信
+            if (!voiceText == false) {
+                sendAxios(voiceText);
             }
         }
-        voiceText += item;
-        c = (itemEndingChar == 0) ? itemBeginningChar : itemEndingChar;
-        if (c == 0x0020) {
-            voiceTextEnding = 0;
-        } else
-            if (c >= 0x0041 && c <= 0x005A
-                || c >= 0x0061 && c <= 0x007A
-                || c >= 0x0100 && c <= 0x0DFF
-                || c >= 0x0E60 && c <= 0x01FF) {
-                voiceTextEnding = 1;
-            } else
-                if (c >= 0xFF21 && c <= 0xFF3A
-                    || c >= 0xFF41 && c <= 0xFF5A) {
-                    voiceTextEnding = 2;
-                } else
-                    if (c >= 0x0030 && c <= 0x0039) {
-                        voiceTextEnding = (itemEndingChar == 0) ? 8 : 3;
-                    } else
-                        if (c >= 0xFF10 && c <= 0xFF19) {
-                            voiceTextEnding = (itemEndingChar == 0) ? 9 : 4;
-                        } else
-                            if (c == 0x0021
-                                || c == 0x002C
-                                || c == 0x002E
-                                || c == 0x003A
-                                || c == 0x003B
-                                || c == 0x003F) {
-                                voiceTextEnding = 5;
-                            } else
-                                if (c == 0x3001
-                                    || c == 0x3002
-                                    || c == 0xFF01
-                                    || c == 0xFF0C
-                                    || c == 0xFF0E
-                                    || c == 0xFF1A
-                                    || c == 0xFF1B
-                                    || c == 0xFF1F) {
-                                    voiceTextEnding = 6;
-                                } else {
-                                    voiceTextEnding = 7;
-                                }
-    }
 
-    // ================================ 録音開始&停止ボタン ================================
-    function disconnectEnded() {
+        // ================================ 認証情報 ================================
+        // auth.jsから情報を読み込む
+        let grammarFileNames = document.getElementsByClassName("grammarFileNames");
+        let issuerURL = __SPEACH_TO_TEXT_URL;
+        let sid = __SPEACH_TO_TEXT_USER_ID;
+        let spw = __SPEACH_TO_TEXT_USER_PW;
+        let recognitionResultText = document.getElementsByClassName("recognitionResultText");
 
+        //後でsetting.jsに追加する
+        serverURL.value = "wss://acp-api.amivoice.com/v1/";
+        //setting.jsに記載したAPP KEYを取得する
+        authorization.value = __SPEACH_TO_TEXT_API_KEY;
+        grammarFileNames[0].value = '-a-general';
+
+        //音声認識ライブラリのプロパティ要素の設定
+        Wrp.serverURLElement = serverURL;
+        Wrp.grammarFileNamesElement = grammarFileNames[0];
+        Wrp.authorizationElement = authorization;
+        Wrp.issuerURLElement = issuerURL;
+        Wrp.sidElement = sid;
+        Wrp.spwElement = spw;
+        Wrp.name = "";
+        Wrp.recognitionResultText = recognitionResultText[0];
+        Wrp.disconnectEnded = disconnectEnded;
+        Wrp.feedDataResumeEnded = feedDataResumeEnded;
+        Wrp.resultFinalized = resultFinalized;
         // 録音の開始
-        resumePauseButton.innerHTML = "録音の開始";
-        resumePauseButton.disabled = false;
-        resumePauseButton.classList.remove("sending");
-    }
-
-    // ================================ 録音中&停止ボタン ================================
-    function feedDataResumeEnded() {
-
-        resumePauseButton.innerHTML = "<br><br>音声データの録音中...<br><br><span class=\"supplement\">クリック → 録音の停止</span>";
-        resumePauseButton.disabled = false;
-        resumePauseButton.classList.add("sending");
-
-    }
-    // この関数は恐らく使用していない
-    // ================================ 音声認識処理の最中 ================================
-    function resultUpdated(result) {
-
-        try {
-            let json = JSON.parse(result);
-        } catch (e) {
-            if (result.indexOf("\x01") == -1) {
-            } else {
-                let fields = result.split("\x01");
-                let fields0 = fields[0].split("|");
-                voiceTextEnding = 0;
-                let i, j;
-                for (i = 0; i < fields0.length; i++) {
-                    let written = fields0[i];
-                    if ((j = written.indexOf(" ")) != -1) {
-                        written = written.slice(0, j);
-                    }
-                    if ((j = written.indexOf(":")) != -1) {
-                        written = written.slice(0, j);
-                    }
-                    if ((j = written.indexOf("\x03")) != -1) {
-                        written = written.slice(0, j);
-                    }
-                    append_(written);
-                }
-            }
-        }
-
-        this.recognitionResultText.innerHTML = voiceText;
-    }
-    //wrp.htmlのコピペ
-    // ================================ 認識処理 ================================
-    function resultFinalized(result) {
-        this.time0 = 0;
-        this.time2 = new Date().getTime() - this.time2;
-        this.confidence = -1.0;
-        try {
-            let json = JSON.parse(result);
-            voiceText = (json.text) ? sanitize_(json.text) : (json.code != 'o' && json.message);
-            if (json.results && json.results[0]) {
-                if (this.time0 == 0) {
-                    this.time0 = json.results[0].endtime;
-                }
-                this.confidence = json.results[0].confidence;
-            }
-        } catch (e) {
-            if (result.indexOf("\x01") == -1) {
-            } else {
-                let fields = result.split("\x01");
-                let fields0 = fields[0].split("|");
-                voiceTextEnding = 0;
-
-                let i, j;
-                for (i = 0; i < fields0.length; i++) {
-                    let written = fields0[i];
-                    if ((j = written.indexOf(" ")) != -1) {
-                        written = written.slice(0, j);
-                    }
-                    if ((j = written.indexOf(":")) != -1) {
-                        written = written.slice(0, j);
-                    }
-                    if ((j = written.indexOf("\x03")) != -1) {
-                        written = written.slice(0, j);
-                    }
-                    append_(written);
-                }
-                voiceText = (voiceText) ? sanitize_(voiceText) : "<font color=\"gray\">(なし)</font>";
-                if (this.time0 == 0) {
-                    this.time0 = parseInt(fields[2].split("-")[1]);
-                }
-                this.confidence = parseFloat(fields[1]);
-            }
-        }
-        // ================================ 書き起こした文字を表示 (コンソールとHTMLに直で) ================================
-
-        console.log(voiceText);
-
-        // ================================ Ajax/Axios非同期通信処理 ================================
-        // axios送信用のデータを用意
-        // 引数：文字起こししたテキストデータ
-        // 返り値：axos送信用データ
-        const readyAxios = function(textData){
-            axiosReadyData = { documents: [{ id: "1", text: textData}]}
-            return axiosReadyData
-        };
-        
-
-
-        const sendAxios = (text) => {
-            const axiosdata = readyAxios(text)
-            axios.post(__TEXT_URL, axiosdata, {
-                headers: {'Ocp-Apim-Subscription-Key': __TEXT_KEY},
-            }).then((res) => {
-                console.log("ポジティブ:"+ res.data.documents[0].confidenceScores.positive)
-                console.log("ネガティブ:"+ res.data.documents[0].confidenceScores.negative)
-            })
-            .catch((error) => {
-                console.log(error)
-            });
-        }
-
-        // じゅんじゅん (2021/06/29) ================================
-        // 変更: ボタンで送信 → 文節ごとに送信
-        if (!voiceText == false) {
-            sendAxios(voiceText);
-        }
-    }
-
-    // ================================ 認証情報 ================================
-    // auth.jsから情報を読み込む
-    let grammarFileNames = document.getElementsByClassName("grammarFileNames");
-    let issuerURL = __SPEACH_TO_TEXT_URL;
-    let sid = __SPEACH_TO_TEXT_USER_ID;
-    let spw = __SPEACH_TO_TEXT_USER_PW;
-    let recognitionResultText = document.getElementsByClassName("recognitionResultText");
-
-    //後でsetting.jsに追加する
-    serverURL.value = "wss://acp-api.amivoice.com/v1/";
-    //setting.jsに記載したAPP KEYを取得する
-    authorization.value = __SPEACH_TO_TEXT_API_KEY;
-    grammarFileNames[0].value = '-a-general';
-
-    //音声認識ライブラリのプロパティ要素の設定
-    Wrp.serverURLElement = serverURL;
-    Wrp.grammarFileNamesElement = grammarFileNames[0];
-    Wrp.authorizationElement = authorization;
-    Wrp.issuerURLElement = issuerURL;
-    Wrp.sidElement = sid;
-    Wrp.spwElement = spw;
-    Wrp.name = "";
-    Wrp.recognitionResultText = recognitionResultText[0];
-    Wrp.disconnectEnded = disconnectEnded;
-    Wrp.feedDataResumeEnded = feedDataResumeEnded;
-    Wrp.resultFinalized = resultFinalized;
-    // 録音の開始
-    const recordingStart = async function(){
-        // 音声認識サーバへの音声データの供給中かどうかのチェック
-        if (Wrp.isActive()) {
-            // グラマファイル名が指定されている場合...
-            // 音声認識サーバへの音声データの供給の開始
-            Wrp.feedDataPause();
-            // ボタンの制御
-            resumePauseButton.disabled = true;
-        } else {
-            // 音声認識サーバへの音声データの供給中でない場合...
-            // グラマファイル名が指定されているかどうかのチェック
-            if (Wrp.grammarFileNamesElement.value != "") {
+        const recordingStart = async function () {
+            // 音声認識サーバへの音声データの供給中かどうかのチェック
+            if (Wrp.isActive()) {
                 // グラマファイル名が指定されている場合...
                 // 音声認識サーバへの音声データの供給の開始
-                Wrp.feedDataResume();
+                Wrp.feedDataPause();
                 // ボタンの制御
                 resumePauseButton.disabled = true;
             } else {
+                // 音声認識サーバへの音声データの供給中でない場合...
+                // グラマファイル名が指定されているかどうかのチェック
+                if (Wrp.grammarFileNamesElement.value != "") {
+                    // グラマファイル名が指定されている場合...
+                    // 音声認識サーバへの音声データの供給の開始
+                    Wrp.feedDataResume();
+                    // ボタンの制御
+                    resumePauseButton.disabled = true;
+                } else {
+                }
             }
-        }
-    };
-    // ================================ 発火 ================================
-    // 感情分析開始ボタンが押されたら文字起こしを開始する
-    const StartEmotionAnalysis = document.getElementById("face");
-    StartEmotionAnalysis.addEventListener("click",recordingStart);
+        };
+        // ================================ 発火 ================================
+        // 感情分析開始ボタンが押されたら文字起こしを開始する
+        const StartEmotionAnalysis = document.getElementById("make-call");
+        StartEmotionAnalysis.addEventListener("click", recordingStart);
 
-    //firebaseとの連携。取得したネガポジ感情をfirabaseに送信する
-    // let text_flg;
-    // fb.ref(emo_flg).on('value', (d) => {
-    //     const v = d.val();
-    //     if (v == 1) {
-    //         text_flg = 1;
-    //         recordingStart();
-    //     } else if (v == 0) {
-    //         if (text_flg == 1) {
-    //             recordingStart();
-    //         }
-    //     }
-    // });
-})();
+        //firebaseとの連携。取得したネガポジ感情をfirabaseに送信する
+        // let text_flg;
+        // fb.ref(emo_flg).on('value', (d) => {
+        //     const v = d.val();
+        //     if (v == 1) {
+        //         text_flg = 1;
+        //         recordingStart();
+        //     } else if (v == 0) {
+        //         if (text_flg == 1) {
+        //             recordingStart();
+        //         }
+        //     }
+        // });
+    })();
 

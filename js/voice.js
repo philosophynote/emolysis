@@ -1,23 +1,23 @@
 // export WAV from audio float data
 voiceObject = {
-    audio_sample_rate : 11025,
-    bufferSize : 1024,
-    recordTime : 500,
-    sleepTime : 5000,
-    
+    audio_sample_rate: 11025,
+    bufferSize: 1024,
+    recordTime: 500,
+    sleepTime: 5000,
 
-    voiceAnalysis : function (audioData) {
-        const encodeWAV = function(samples, sampleRate) {
+
+    voiceAnalysis: function (audioData) {
+        const encodeWAV = function (samples, sampleRate) {
             let buffer = new ArrayBuffer(44 + samples.length * 2);
             let view = new DataView(buffer);
-    
+
             const writeString = function (view, offset, string) {
                 for (let i = 0; i < string.length; i++) {
                     view.setUint8(offset + i, string.charCodeAt(i));
                 }
             };
 
-            const floatTo16BitPCM = function(output, offset, input){
+            const floatTo16BitPCM = function (output, offset, input) {
                 for (let i = 0; i < input.length; i++, offset += 2) {
                     let s = Math.max(-1, Math.min(1, input[i]));
                     output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
@@ -41,7 +41,7 @@ voiceObject = {
         };
 
 
-        const mergeBuffers = function(audioData){
+        const mergeBuffers = function (audioData) {
             let sampleLength = 0;
             for (let i = 0; i < audioData.length; i++) {
                 sampleLength += audioData[i].length;
@@ -58,7 +58,7 @@ voiceObject = {
         };
 
         //WavファイルをBlobファイルに変換する
-        const convertIntoBlobfile = function(audioData){
+        const convertIntoBlobfile = function (audioData) {
             let dataview = encodeWAV(mergeBuffers(audioData), voiceObject.audio_sample_rate); //11025以外の数字に設定すると"invalid sample-rate. is(22050.000000), expected(11025.000000)."というメッセージがAPIから帰ってくる
             let audioBlob = new Blob([dataview], { type: 'audio/wav' }); //Blob(データ,データタイプ)でBlobファイルを作成する
             console.log(audioBlob)
@@ -66,33 +66,33 @@ voiceObject = {
         };
 
         //BlobファイルをWebEmpathAPIのエンドポイントに送信するフォームデータに格納する。同時にAPIkeyも格納する。
-        const storeBlobIntoAxios = function(API_KRY,BlobFile){
+        const storeBlobIntoAxios = function (API_KRY, BlobFile) {
             let axiosdata = new FormData(); //Axiosで送信する空のフォームデータ
             axiosdata.append('apikey', API_KRY); //APIkeyを格納する
             axiosdata.append('wav', BlobFile);
             return axiosdata
-        };   
+        };
 
         // 上述した２つの関数を実行し、axiosを使う準備をする
         //引数：BlobFile
         //戻り値：axiosdata   
-        const readyAxios = function(audioData){
+        const readyAxios = function (audioData) {
             API_KEY = __VOICE_KEY
             BlobFile = convertIntoBlobfile(audioData)
-            axiosReadyData = storeBlobIntoAxios(API_KEY,BlobFile)
+            axiosReadyData = storeBlobIntoAxios(API_KEY, BlobFile)
             return axiosReadyData
         };
 
         //APIに送信した結果をオブジェクトで受け取る関数
         //引数：res(APIからの受信結果)
         //戻り値：emo_voice(音声感情分析の結果)
-        const receiveAPI = function(res){
+        const receiveAPI = function (res) {
             emo_voice = {
-                anger : res.data["anger"] / 50,
-                calm : res.data["calm"] / 50,
-                energy : res.data["energy"] / 50,
-                joy : res.data["joy"] / 50,
-                sorrow : res.data["sorrow"] / 50 
+                anger: res.data["anger"] / 50,
+                calm: res.data["calm"] / 50,
+                energy: res.data["energy"] / 50,
+                joy: res.data["joy"] / 50,
+                sorrow: res.data["sorrow"] / 50
             }
             return emo_voice
         };
@@ -111,11 +111,12 @@ voiceObject = {
             //もっと分ける
             const Result = receiveAPI(res)
             console.log(Result)
+            console.log(__DB.sendData('voice', Result))
             //他のAPIで返された値と揃えるために50で割る
         })
-        .catch((response) => {
-            console.log(response)
-        });
+            .catch((response) => {
+                console.log(response)
+            });
 
     },
 }
@@ -130,7 +131,7 @@ const onAudioProcess = function (e) {
     audioData.push(bufferData);
 };
 
-const recorder = function (){
+const recorder = function () {
     // when time passed without pushing the stop button
     setTimeout(function () {
         // console.log(audioData)
@@ -152,10 +153,10 @@ const handleSuccess = function (stream) {
     scriptProcessor.onaudioprocess = onAudioProcess;
     scriptProcessor.connect(audioContext.destination);
     console.log('record start?');
-    recorder() 
+    recorder()
 };
 // getUserMedia
-const startAnalysis = function() {
+const startAnalysis = function () {
     navigator.mediaDevices.getUserMedia({ audio: true, video: false })
         .then(handleSuccess)
 };
@@ -164,7 +165,7 @@ const sleepAnalysis = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 //5秒に1回録音する
 window.__voice = {
-    executeAnalysis : async function() {
+    executeAnalysis: async function () {
         for (let recordCount = 0; recordCount < 4; recordCount++) {
             if (recordCount >= 1) {
                 sleepId = await sleepAnalysis(5000)
@@ -179,8 +180,8 @@ window.__voice = {
 
 
 // テスト用
-const startvoiceBtn = document.getElementById('face')
-startvoiceBtn.addEventListener("click",__voice.executeAnalysis)
+// const startvoiceBtn = document.getElementById('face')
+// startvoiceBtn.addEventListener("click", __voice.executeAnalysis)
 
 
 //firebaseに送信
