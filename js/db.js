@@ -39,6 +39,11 @@ window.__DB = {
         this.fb.ref(`data/${this.dataId}/${dataType}`).push(data)
     },
 
+    // 終了時のメッセージ送信処理
+    sendMsgNumber: function(number){
+        this.fb.ref().update({msg: number})
+    },
+
     // データ送受信のフラグの開始
     switchFlgStart: function () {
         this.fb.ref().update({ 'flg': 1 })
@@ -64,14 +69,11 @@ window.__DB = {
     // 分析スタート処理と分析ストップ処理をうけとって、
     // DBの変更のコールバックとして設定する
     subscribeStateChange: function () {
-        console.log('before subscribe')
-        console.log(__DB)
         this.fb.ref().on('child_changed', data => {
             console.log('subscribe')
             const key = data.key
             switch (key) {
                 case 'flg':
-                    console.log('flg changed')
                     this.sendFlg = data.val()
                     break
                 case 'currentSkyWayKey':
@@ -80,6 +82,7 @@ window.__DB = {
             }
         })
     },
+
     subscribeDataAdded: function () {
         this.fb.ref(`data/${this.dataId}`).on('child_added', data => {
             console.log(data.key)
