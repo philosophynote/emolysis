@@ -1,5 +1,4 @@
 let timerId = ''
-let interval = 1000
 let dataId = ''
 let db = null
 
@@ -7,7 +6,7 @@ let db = null
 // -----------------------------------------
 // 概要
 //  databaseInitを実行するとfirebaseの初期化処理が行われる
-//  subscribeChildChange関数によってflgとskywayのkeyへの監視が行われる
+//  subscribeStateChange関数によってflgとskywayのkeyへの監視が行われる
 //  flgが1の時、それぞれの分析シークエンスが始まる
 // -----------------------------------------
 
@@ -36,7 +35,8 @@ const stopFaceAnalysisSequence = function () {
 // 初期化 
 //  ------------------------------------------------------------
 __DB.init()
-__DB.subscribeChildChange()
+__DB.subscribeStateChange()
+faceAnalysisSequence(window.__VOICE_INTERVAL)
 
 // ------------------------------------------------------------
 // test
