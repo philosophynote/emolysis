@@ -61,7 +61,7 @@ voiceObject = {
         const convertIntoBlobfile = function (audioData) {
             let dataview = encodeWAV(mergeBuffers(audioData), voiceObject.audio_sample_rate); //11025以外の数字に設定すると"invalid sample-rate. is(22050.000000), expected(11025.000000)."というメッセージがAPIから帰ってくる
             let audioBlob = new Blob([dataview], { type: 'audio/wav' }); //Blob(データ,データタイプ)でBlobファイルを作成する
-            console.log(audioBlob)
+
             return audioBlob
         };
 
@@ -110,8 +110,7 @@ voiceObject = {
             //感情分析の結果を格納するオブジェクト
             //もっと分ける
             const Result = receiveAPI(res)
-            console.log(Result)
-            console.log(__DB.sendData('voice', Result))
+            __DB.sendData('voice', Result)
             //他のAPIで返された値と揃えるために50で割る
         })
             .catch((response) => {
