@@ -6,6 +6,7 @@ window.__DB = {
     init: function () {
         firebase.initializeApp(window.__FIREBASE_CONFIG)
         this.fb = firebase.database()
+        this.switchFlgStop()
     },
 
     // データの送り先の設定処理（kranke側）
@@ -15,7 +16,8 @@ window.__DB = {
 
     // データの送り先の設定処理（ドクター側）
     sendDataId: function (dataId) {
-        this.fb.ref('currentSkyWayKey').set(dataId)
+        console.log(dataId)
+        this.fb.ref().update({ 'currentSkyWayKey': dataId })
     },
 
     // データの送信処理
@@ -44,6 +46,9 @@ window.__DB = {
 
     // データ送受信のフラグの停止
     switchFlgStop: function () {
+        this.fb.ref().get(snap => {
+            console.log(snap.val())
+        })
         this.fb.ref().update({ 'flg': 0 })
     },
 
@@ -58,17 +63,27 @@ window.__DB = {
     // 受信処理をまとめる関数
     // 分析スタート処理と分析ストップ処理をうけとって、
     // DBの変更のコールバックとして設定する
-    subscribeChildChange: function () {
-        __DB.fb.ref().on('child_changed', data => {
+    subscribeStateChange: function () {
+        console.log('before subscribe')
+        console.log(__DB)
+        this.fb.ref().on('child_changed', data => {
+            console.log('subscribe')
             const key = data.key
             switch (key) {
                 case 'flg':
+                    console.log('flg changed')
                     this.sendFlg = data.val()
                     break
                 case 'currentSkyWayKey':
                     dataId = data.val()
                     break
             }
+        })
+    },
+    subscribeDataAdded: function () {
+        this.fb.ref(`data/${this.dataId}`).on('child_added', data => {
+            console.log(data.key)
+            console.log(data.val())
         })
     }
 }
