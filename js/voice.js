@@ -2,8 +2,8 @@
 voiceObject = {
     audio_sample_rate: 11025,
     bufferSize: 1024,
-    recordTime: 500,
-    sleepTime: 5000,
+    recordTime: window.__VOICE_RECORDING_TIME,
+    sleepTime: window.__VOICE_INTERVAL,
 
 
     voiceAnalysis: function (audioData) {

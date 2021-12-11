@@ -4,7 +4,7 @@ let localStream;
 navigator.mediaDevices.getUserMedia({ video: true, audio: true })
     .then(stream => {
         // 成功時にvideo要素にカメラ映像をセットし、再生
-        const videoElm = document.getElementById('dokdor-video');
+        const videoElm = document.getElementById('my-video');
         videoElm.srcObject = stream;
         videoElm.play();
         // 着信時に相手にカメラ映像を返せるように、グローバル変数に保存しておく
