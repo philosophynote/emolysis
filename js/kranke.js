@@ -20,7 +20,7 @@ const faceAnalysisSequence = function (interval) {
     timerId = setInterval(async function () {
         const img = window.__video.getImageByVideo()
         const result = await window.__video.getFaceExpressions(img)
-        console.log(result)
+        // console.log(result)
         __DB.sendData('video', result)
     }, interval)
 }
