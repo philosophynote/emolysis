@@ -152,25 +152,11 @@
   <script src="js/kranke.js"></script>
 
   <script>
-    // __DB.ref().on('child_changed').then(snap => {
-    //   const k = snap.key
-    //   if (k != 'msg') { return }
-    //   const v = snap.val()
-    //   console.log('msg recived')
-    //   console.log(v)
-    //   const msgBox = document.querySelector('.messageBox')
-    //   messageBox[v].style.transform = "translate(-50%,-50%) scale(1)";
-    // })
-    __DB.fb.ref().on('child_changed', data => {
-      console.log(data.key)
-      console.log(data.val())
-      if (data.key == 'msg') {
-        const msgBox = document.querySelectorAll('.messageBox')
-        const target = msgBox[data.val()]
-        target.style.transform = "translate(-50%,-50%) scale(1)";
-      }
+    __DB.fb.ref('msg').on('child_changed', data => {
+      const msgBox = document.querySelectorAll('.messageBox')
+      const target = msgBox[data.val()]
+      target.style.transform = "translate(-50%,-50%) scale(1)";
     })
-    console.log()
   </script>
 </body>
 
