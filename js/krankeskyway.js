@@ -17,7 +17,7 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: true })
 
 //Peer作成
 const peer = new Peer({
-    key: 'c730be06-774f-498a-8255-56b20035595f',
+    key: __SKYWAY_KEY,
     debug: 3
 });
 peer.on('open', () => {

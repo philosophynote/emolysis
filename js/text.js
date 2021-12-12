@@ -1365,6 +1365,9 @@ var Wrp = function () {
         if (wrp_.epi) {
             searchParams += "&epi=" + encodeURIComponent(wrp_.epi);
         }
+
+        // APIに投げて文字起こしを行う
+
         var httpRequest = new XMLHttpRequest();
         httpRequest.addEventListener("load", function (e) {
             if (e.target.status === 200) {
@@ -1390,6 +1393,7 @@ var Wrp = function () {
         httpRequest.addEventListener("timeout", function (e) {
             if (wrp_.issueEnded) wrp_.issueEnded("");
         });
+        //  送信箇所
         httpRequest.open("POST", wrp_.issuerURL, true);
         httpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         httpRequest.send(searchParams);
