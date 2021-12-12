@@ -6,6 +6,7 @@ const startBtn = document.getElementById('make-call')
 startBtn.addEventListener('click', function () {
     const doctorId = document.getElementById('displayDokdorId').textContent
     __DB.sendDataId(doctorId)
+    __DB.setDataId(doctorId)
     __DB.subscribeDataAdded()
 })
 __DB.init()
