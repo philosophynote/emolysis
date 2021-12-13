@@ -1,5 +1,3 @@
-// 次のサンプルプログラム(recorder.js)のコピペ
-// https://acp.amivoice.com/main/manual/%e3%82%b5%e3%83%b3%e3%83%97%e3%83%ab%e3%83%97%e3%83%ad%e3%82%b0%e3%83%a9%e3%83%a0/
 var Recorder = function () {
     // window.AudioContext()
     window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext;
@@ -558,8 +556,6 @@ var Recorder = function () {
     return recorder_;
 }();
 
-// 次のサンプルプログラム(wrp.js)のコピペ
-// https://acp.amivoice.com/main/manual/%e3%82%b5%e3%83%b3%e3%83%97%e3%83%ab%e3%83%97%e3%83%ad%e3%82%b0%e3%83%a9%e3%83%a0/
 var Wrp = function () {
     // public オブジェクト
     var wrp_ = {
@@ -1366,8 +1362,7 @@ var Wrp = function () {
             searchParams += "&epi=" + encodeURIComponent(wrp_.epi);
         }
 
-        // APIに投げて文字起こしを行う
-
+        // APIに音声データを送信して文字起こしを実行する
         var httpRequest = new XMLHttpRequest();
         httpRequest.addEventListener("load", function (e) {
             if (e.target.status === 200) {
@@ -1423,7 +1418,6 @@ var Wrp = function () {
 }();
 
 // ================================ 音声の文字書き起こし処理 ================================
-// サンプルプログラムのwrp.htmlのJavascript部分のコピペ
 window.__textEmotion =
     (function () {
         function sanitize_(s) {
@@ -1438,7 +1432,7 @@ window.__textEmotion =
         let voiceText;
         let voiceTextEnding;
 
-        // ここからは理解できないが、いい感じに文章、音節ごとに区切って検出する技が書かれている
+        // 文章、音節を自動的に区切って検出する
         function append_(item) {
 
             if (item.length == 0) {
@@ -1668,7 +1662,6 @@ window.__textEmotion =
             resumePauseButton.classList.add("sending");
 
         }
-        // この関数は恐らく使用していない
         // ================================ 音声認識処理の最中 ================================
         function resultUpdated(result) {
 
@@ -1699,7 +1692,6 @@ window.__textEmotion =
 
             this.recognitionResultText.innerHTML = voiceText;
         }
-        //wrp.htmlのコピペ
         // ================================ 認識処理 ================================
         function resultFinalized(result) {
             this.time0 = 0;
@@ -1742,7 +1734,7 @@ window.__textEmotion =
                     this.confidence = parseFloat(fields[1]);
                 }
             }
-            // ================================ 書き起こした文字を表示 (コンソールとHTMLに直で) ================================
+            // ================================ 書き起こした文字を表示 ================================
 
             console.log(voiceText);
 
@@ -1756,9 +1748,10 @@ window.__textEmotion =
             };
 
 
-
+            // 通信して結果をfirebaseに送信する
             const sendAxios = (text) => {
                 const axiosdata = readyAxios(text)
+                // APIのエンドポイントに送る
                 axios.post(__TEXT_URL, axiosdata, {
                     headers: { 'Ocp-Apim-Subscription-Key': __TEXT_KEY },
                 }).then((res) => {
@@ -1768,28 +1761,25 @@ window.__textEmotion =
                         positive: res.data.documents[0].confidenceScores.positive,
                         negative: res.data.documents[0].confidenceScores.negative
                     })
-                })
-                    .catch((error) => {
-                        console.log(error)
-                    });
+                }).catch((error) => {
+                    console.log(error)
+                });
             }
 
-            // じゅんじゅん (2021/06/29) ================================
-            // 変更: ボタンで送信 → 文節ごとに送信
+            // 文節ごとに送信
             if (!voiceText == false) {
                 sendAxios(voiceText);
             }
         }
 
         // ================================ 認証情報 ================================
-        // auth.jsから情報を読み込む
+        // setting.jsなどから情報を読み込む
         let grammarFileNames = document.getElementsByClassName("grammarFileNames");
         let issuerURL = __SPEACH_TO_TEXT_URL;
         let sid = __SPEACH_TO_TEXT_USER_ID;
         let spw = __SPEACH_TO_TEXT_USER_PW;
         let recognitionResultText = document.getElementsByClassName("recognitionResultText");
 
-        //後でsetting.jsに追加する
         serverURL.value = "wss://acp-api.amivoice.com/v1/";
         //setting.jsに記載したAPP KEYを取得する
         authorization.value = __SPEACH_TO_TEXT_API_KEY;
@@ -1830,22 +1820,9 @@ window.__textEmotion =
             }
         };
         // ================================ 発火 ================================
-        // 感情分析開始ボタンが押されたら文字起こしを開始する
+        // 通話開始ボタンが押されたら文字起こしと感情分析を開始する
         const StartEmotionAnalysis = document.getElementById("make-call");
         StartEmotionAnalysis.addEventListener("click", recordingStart);
-
-        //firebaseとの連携。取得したネガポジ感情をfirabaseに送信する
-        // let text_flg;
-        // fb.ref(emo_flg).on('value', (d) => {
-        //     const v = d.val();
-        //     if (v == 1) {
-        //         text_flg = 1;
-        //         recordingStart();
-        //     } else if (v == 0) {
-        //         if (text_flg == 1) {
-        //             recordingStart();
-        //         }
-        //     }
-        // });
-    })();
+    }
+)();
 

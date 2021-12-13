@@ -41,12 +41,12 @@ const setEventListener = mediaConnection => {
     });
 }
 
-//着信処理
+// 着信処理
 peer.on('call', mediaConnection => {
     mediaConnection.answer(localStream);
     setEventListener(mediaConnection);
 });
-
+// 通話開始時の処理
 const callBtn = document.getElementById('make-call');
 const callBox = document.querySelector('.call-box')
 callBtn.addEventListener("click", function () {

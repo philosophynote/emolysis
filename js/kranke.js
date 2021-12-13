@@ -20,7 +20,6 @@ const faceAnalysisSequence = function (interval) {
     timerId = setInterval(async function () {
         const img = window.__video.getImageByVideo()
         const result = await window.__video.getFaceExpressions(img)
-        // console.log(result)
         __DB.sendData('video', result)
     }, interval)
 }
@@ -36,30 +35,20 @@ const stopFaceAnalysisSequence = function () {
 //  ------------------------------------------------------------
 __DB.init()
 __DB.subscribeStateChange()
-faceAnalysisSequence(window.__VOICE_INTERVAL)
+faceAnalysisSequence(window.__VIDEO_INTERVAL)
 
-// ------------------------------------------------------------
-// test
-// ------------------------------------------------------------
+const input = document.getElementById('inputDokdorId')
+const cBtn = document.getElementById('make-call')
+
 const changeFlg = function () {
     __DB.toggleFlg()
     faceAnalysisSequence(interval)
 }
+// Firebaseにskywayのキーを送信する
 const setSkyWayKey = function () {
     __DB.setDataId(input.value)
-    console.log(__DB)
 }
-
-
-const tBtn = document.getElementById('tBtn')
-const input = document.getElementById('inputDokdorId')
-const cBtn = document.getElementById('make-call')
-
-tBtn.addEventListener('click', function () {
-    changeFlg()
-    console.log('test')
-})
-
+// 通話開始ボタンをクリックすると表情分析・音声感情分析・firebaseの設定がスタートする
 cBtn.addEventListener('click', function () {
     window.__video.init()
     setSkyWayKey()

@@ -9,17 +9,17 @@
   <!-- タッキーCSS -->
   <link rel="stylesheet" href='css/reset.css'>
   <link rel="stylesheet" href='css/sw.css'>
-  <!--jQuery-->
+  <!-- jQuery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <!--axios-->
+  <!-- axios -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
-  <!--cookie-->
+  <!-- cookie -->
   <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
   <!-- skyway -->
   <script src="https://cdn.webrtc.ecl.ntt.com/skyway-4.4.1.min.js"></script>
   <!-- firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase.js"></script>
-  <!-- タッキー分 -->
+  <!-- fontawesome -->
   <script src="https://kit.fontawesome.com/f6548674cd.js" crossorigin="anonymous"></script>
 </head>
 
@@ -29,29 +29,20 @@
     <div class="kranke-video-box">
       <video id="kranke-video" autoplay muted playsinline></video>
     </div>
-    <button id="tBtn">test</button>
-    <i class="far fa-times-circle"></i>
   </div>
   <div class="call-box">
     <p id="displayKrankeId"></p>
     <input id="inputDokdorId"></input>
     <button id="make-call">発信</button>
   </div>
-  <!-- //メッセージを表示するボタン -->
-  <!-- <div class="message">
-    <p><i class="fas fa-envelope-square"></i></p>
-  </div> -->
-  <!-- //モーダル（仮で画像入れてます） -->
+  <!-- モーダル表示 -->
   <div class="messageBox"><img src='img/happiness.png' alt=""></div>
   <div class="messageBox"><img src='img/sadness.png' alt=""></div>
   <div class="messageBox"><img src='img/anger.png' alt=""></div>
   <div class="messageBox"><img src='img/normal.png' alt=""></div>
 
   <input type="text" name="" id="name" placeholder="name" value="kranke_A" style="display:none;margin-top:1000px">
-
-  <!-- ================================ 必要情報のテーブル (消したい) ================================ -->
-  <!-- 追加: 26_じゅんじゅん 2021/06/28 -->
-  <!-- ※ すみません。隠してください。 -->
+  <!-- ================================ 必要情報のテーブル  ================================ -->
   <table border="0" width="100%" cellspacing="3" cellpadding="0" style="display:none;">
     <tr>
       <td width="240">&nbsp;サーバ URL</td>
@@ -76,81 +67,20 @@
   <script src="js/setting.js"></script>
   <!-- 各APIに対する実行頻度の設定ファイル読み込み -->
   <script src="js/appSetting.js"></script>
-
-
-  <script>
-    // Firebase初期化
-    // firebase.initializeApp(__FIREBASE_CONFIG);
-    // let fb = firebase.database();
-    // //json形式で受け取った値を格納する
-    // const emo_voice = {
-    //   anger: 0,
-    //   calm: 0,
-    //   energy: 0,
-    //   joy: 0,
-    //   sorrow: 0,
-    // }
-    // //ネガポジ情報
-    // const emo_text = {
-    //   magnitude: 0,
-    //   score: 0
-    // };
-    // const doktorId = document.getElementById("inputDokdorId").value
-    // const makecallbtn = document.getElementById("make-call");
-    // //規定値の設定(firabase側の事情なので詳細は不明)
-    // makecallbtn.addEventListener('click', function () {
-    //   console.log(doktorId)
-    //   const emo_voice = {
-    //     error: 0,
-    //     calm: 0,
-    //     anger: 0,
-    //     joy: 0,
-    //     sorrow: 0,
-    //     energy: 0,
-    //   };
-    //   fb.ref(doktorId + "/voice").set(0);
-    //   fb.ref(doktorId + "/voice").push(emo_voice);
-    // });
-    // const emo_last = {
-    //   t_magnitude: 0,
-    //   t_score: 0,
-    //   f_anger: 0,
-    //   f_contempt: 0,
-    //   f_disgust: 0,
-    //   f_fear: 0,
-    //   f_happiness: 0,
-    //   f_neutral: 0,
-    //   f_sadness: 0,
-    //   f_surprise: 0,
-    //   v_anger: 0,
-    //   v_calm: 0,
-    //   v_energy: 0,
-    //   v_joy: 0,
-    //   v_sorrow: 0,
-    //   positive: 0,
-    //   negative: 0
-    // }
-  </script>
-
-  <!-- 不要かもしれません -->
-  <p id="txt"></p>
-
   <!-- DB -->
   <script src="js/db.js"></script>
-
   <!-- 音声感情認識 -->
   <script src="js/voice.js"></script>
   <!-- 言語感情認識 -->
   <script src="js/text.js"></script>
   <!-- skyway -->
   <script src="js/krankeskyway.js"></script>
-
   <!-- video -->
   <script src="lib/face-api.min.js"></script>
   <script src="js/video.js"></script>
-  <!-- グラフ描写など -->
+  <!-- 各APIの発火処理 -->
   <script src="js/kranke.js"></script>
-
+  <!-- メッセージ受信処理 -->
   <script>
     __DB.fb.ref('msg').on('child_changed', data => {
       const msgBox = document.querySelectorAll('.messageBox')

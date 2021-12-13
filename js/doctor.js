@@ -18,6 +18,7 @@ __DB.init()
 
 
 window.__graph = {
+    // グラフ描画用の配列
     dateArray : new Array,
     readyGraphArray : new Array(),
     
@@ -30,7 +31,7 @@ window.__graph = {
         o_calm: new Array()
     },
 
-    //「岡田さんの公式」ver3
+    // 各APIの分析結果を５種類の感情にまとめる
     calcAnger : function(emotionObject){
         anger = emotionObject.v_anger  + 0.5 * emotionObject.t_negative + (emotionObject.f_anger + emotionObject.f_disgust) / 2
         return anger
@@ -65,6 +66,9 @@ window.__graph = {
         return graphArrayObject
     },
 
+    // グラフの横軸とグラフの縦軸をPlotly.jsのオブジェクトに入れる
+    // 引数：dateArray(日付時刻入りの配列),arrayObject(感情配列が入ったオブジェクト)
+    // 戻値：graphArray(グラフ描画情報が入ったオブジェクトの配列)  
     readyDrawGraph : function(dateArray,arrayObject){
         // グラフの描画情報が入ったオブジェクトを作成する
         // x：時間,y：岡田さんの公式の計算結果,type：scatter(自動的に折れ線グラフとなる),name(右に表示される凡例名)
@@ -98,17 +102,13 @@ window.__graph = {
         type: 'scatter',
         name: 'calm'
         };
-
-
         const graphArray = [o_anger_g, o_joy_g, o_sorrow_g, o_energy_g, o_calm_g];
-        console.log(graphArray)
         return graphArray
     },
 
     // グラフを描画する関数
     // 引数：各APIから受信した感情の値が入ったオブジェクト
     drawEmotionGraph : function(emotionObject){
-        console.log("----");
         // グラフ横軸の設定(グラフの描画時刻の配列を作成する)
         let graphDate = new Date();///発火した時の時刻を取得
         this.dateArray.push(graphDate);
@@ -133,9 +133,7 @@ window.__graph = {
     }
 } 
 
-// ------------------------------------------------------------
-// test
-// ------------------------------------------------------------
+// 感情グラフの描画開始
 const doctorStartBtn = document.getElementById('startOnlineAnalysis')
 doctorStartBtn.addEventListener('click', function () {
     console.log('doctor start')
