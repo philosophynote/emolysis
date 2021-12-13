@@ -1,12 +1,12 @@
-// export WAV from audio float data
 voiceObject = {
     audio_sample_rate: 11025,
     bufferSize: 1024,
     recordTime: window.__VOICE_RECORDING_TIME,
     sleepTime: window.__VOICE_INTERVAL,
 
-
+    // データを録音し、APIと通信を行い、結果をfirebaseに送信する
     voiceAnalysis: function (audioData) {
+        // WAVファイル作成
         const encodeWAV = function (samples, sampleRate) {
             let buffer = new ArrayBuffer(44 + samples.length * 2);
             let view = new DataView(buffer);
@@ -61,7 +61,6 @@ voiceObject = {
         const convertIntoBlobfile = function (audioData) {
             let dataview = encodeWAV(mergeBuffers(audioData), voiceObject.audio_sample_rate); //11025以外の数字に設定すると"invalid sample-rate. is(22050.000000), expected(11025.000000)."というメッセージがAPIから帰ってくる
             let audioBlob = new Blob([dataview], { type: 'audio/wav' }); //Blob(データ,データタイプ)でBlobファイルを作成する
-
             return audioBlob
         };
 
@@ -75,7 +74,7 @@ voiceObject = {
 
         // 上述した２つの関数を実行し、axiosを使う準備をする
         //引数：BlobFile
-        //戻り値：axiosdata   
+        //戻値：axiosdata   
         const readyAxios = function (audioData) {
             API_KEY = __VOICE_KEY
             BlobFile = convertIntoBlobfile(audioData)
@@ -85,7 +84,7 @@ voiceObject = {
 
         //APIに送信した結果をオブジェクトで受け取る関数
         //引数：res(APIからの受信結果)
-        //戻り値：emo_voice(音声感情分析の結果)
+        //戻値：emo_voice(音声感情分析の結果)
         const receiveAPI = function (res) {
             emo_voice = {
                 anger: res.data["anger"] / 50,
@@ -96,31 +95,26 @@ voiceObject = {
             }
             return emo_voice
         };
-        //引数：audio DataとAPIのエンドポイントのURL
-        //関数の中身：audio DataをAPIのエンドポイントに送信して結果を受け取る
-        //戻値：なし
+        //引数：audio Data
+        //関数の中身：audio Dataをaxios送信用のデータに入れる
+        //戻値：axios送信用のデータ
         const axiosdata = readyAxios(audioData)
+        // APIのエンドポイントに送る
         axios.post(__VOICE_URL, axiosdata, {
             headers: {
                 'content-type': 'multipart/form-data',
             },
         }).then((res) => {
-            //kranke.htmlの『このobj_voiceにapiから取得したデータを入れるようにしてください！』
-            //で指示された通り、APIから取得したデータを代入
-            //感情分析の結果を格納するオブジェクト
-            //もっと分ける
+            // APIの結果をオブジェクトに入れる
             const Result = receiveAPI(res)
+            // firebase送信
             __DB.sendData('voice', Result)
-            //他のAPIで返された値と揃えるために50で割る
-        })
-            .catch((response) => {
-                console.log(response)
-            });
-
+        }).catch((response) => {
+            console.log(response)
+        });
     },
 }
 
-// save audio data
 const onAudioProcess = function (e) {
     var input = e.inputBuffer.getChannelData(0);
     var bufferData = new Float32Array(voiceObject.bufferSize);
@@ -129,19 +123,14 @@ const onAudioProcess = function (e) {
     }
     audioData.push(bufferData);
 };
-
+// recordTime分録音する
 const recorder = function () {
-    // when time passed without pushing the stop button
     setTimeout(function () {
-        // console.log(audioData)
-        voiceObject.voiceAnalysis(audioData);//APIに送る
+        voiceObject.voiceAnalysis(audioData);//音声感情分析実行
         audioContext.close()
-        // console.log(audioContext.state)
     }, voiceObject.recordTime);
 };
-
-
-// getusermedia
+// 音声デバイスの設定
 const handleSuccess = function (stream) {
     audioData = [];
     audioContext = new AudioContext();
@@ -154,40 +143,24 @@ const handleSuccess = function (stream) {
     console.log('record start?');
     recorder()
 };
-// getUserMedia
+// 音声デバイスにアクセスして処理を開始する
 const startAnalysis = function () {
     navigator.mediaDevices.getUserMedia({ audio: true, video: false })
         .then(handleSuccess)
 };
 
+// 録音を休止する
 const sleepAnalysis = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-//5秒に1回録音する
+// 5秒に1回録音する
 window.__voice = {
     executeAnalysis: async function () {
         for (let recordCount = 0; recordCount < 4; recordCount++) {
             if (recordCount >= 1) {
-                sleepId = await sleepAnalysis(5000)
+                sleepId = await sleepAnalysis(voiceObject.sleepTime)
                 clearTimeout(sleepId)
             }
-            startAnalysis()
+            startAnalysis() //処理実行 
         }
     }
 }
-
-
-
-
-// テスト用
-// const startvoiceBtn = document.getElementById('face')
-// startvoiceBtn.addEventListener("click", __voice.executeAnalysis)
-
-
-//firebaseに送信
-// let voice_flg;
-// fb.ref(emo_flg).on('value', (d) => {
-//     const v = d.val();
-//     if (v == 1) {
-//         stvoice();
-//     }
-// });

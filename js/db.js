@@ -100,7 +100,6 @@ window.__DB = {
 
     // 受信側の処理
     subscribeDataAdded: function () {
-        console.log(__DB.dataId)
         this.fb.ref(`video/${this.dataId}`).on('child_added', function(data){
             __DB.emotionObjectFromFirebase.f_anger = data.val().angry
             __DB.emotionObjectFromFirebase.f_disgust = data.val().disgusted
@@ -111,10 +110,6 @@ window.__DB = {
             __DB.emotionObjectFromFirebase.f_surprise = data.val().surprised
         })
         this.fb.ref(`voice/${this.dataId}`).on('child_added', function(data){
-            console.log('voice')
-            console.log(data.key)
-            console.log(data.val())
-            console.log(__DB.emotionObjectFromFirebase)
             __DB.emotionObjectFromFirebase.v_anger = data.val().anger
             __DB.emotionObjectFromFirebase.v_calm = data.val().calm
             __DB.emotionObjectFromFirebase.v_energy = data.val().energy
